@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nemo-guardrails
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nemo-guardrails
+  template:
+    metadata:
+      labels:
+        app: nemo-guardrails
+    spec:
+      containers:
+      - name: nemo-guardrails
+        image: quay.io/rh-ee-mmisiura/nemo-guardrails:latest
+        imagePullPolicy: Always
+        env:
+        - name: CONFIG_ID
+          value: rails-custom-action
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config/rails-custom-action
+      volumes:
+      - name: config-volume
+        configMap:
+          name: nemo-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nemo-guardrails-service
+spec:
+  selector:
+    app: nemo-guardrails
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nemo-guardrails
+spec:
+  to:
+    kind: Service
+    name: nemo-guardrails-service
+  port:
+    targetPort: http
