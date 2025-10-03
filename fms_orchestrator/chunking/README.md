@@ -6,14 +6,14 @@ export FMS_ORCHESTRATOR_URL="https://$(oc get routes guardrails-orchestrator  -o
 ```
 
 ```
-curl  \   
+curl \
   -H "accept: application/json" \
   -H "Content-Type: application/json" \
   -d '{
     "detectors": {
       "ibm-hap-38m-detector": {}
     },
-    "content": "          lllllllllllll          kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk                              ooooooooooooooooooooooooooooo                    lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllliiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii        You dotard I hate this stuff! This is a test. "
+    "content": "lllllllllllll kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk ooooooooooooooooooooooooooooo lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllliiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii You dotard I hate this stuff! This is a test."
   }' \
   "$FMS_ORCHESTRATOR_URL/api/v2/text/detection/content" | jq
 ```
