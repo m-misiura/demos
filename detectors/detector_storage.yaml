@@ -59,6 +59,7 @@ spec:
                 # unitary/toxic-bert
                 ibm-granite/granite-guardian-hap-38m
                 # protectai/deberta-v3-base-prompt-injection-v2
+                Intel/toxic-prompt-roberta
               )
               echo "Starting download"
               mkdir /mnt/models/llms/
