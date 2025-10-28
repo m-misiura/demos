@@ -18,7 +18,7 @@ spec:
       name: guardrails-detector-huggingface
   containers:
     - name: kserve-container
-      image: quay.io/rh-ee-mmisiura/hf-detector:latest
+      image: quay.io/rh-ee-mmisiura/hf-detector:transformers_better_tokenizer_handling
       command:
         - uvicorn
         - app:app
@@ -36,6 +36,10 @@ spec:
           value: /mnt/models
         - name: HF_HOME
           value: /tmp/hf_home
+        - name: TRITON_CACHE_DIR
+          value: /tmp/.triton
+        - name: TORCH_COMPILE_DISABLE
+          value: "1"
       ports:
         - containerPort: 8000
           protocol: TCP

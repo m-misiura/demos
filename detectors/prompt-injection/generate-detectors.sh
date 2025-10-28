@@ -2,14 +2,17 @@
 
 # Model mapping: HuggingFace path|short name for Kubernetes resources
 models=(
-  "Intel/toxic-prompt-roberta|toxic-prompt-roberta"
-  "codeintegrity-ai/promptguard|promptguard"
-  "meta-llama/Llama-Prompt-Guard-2-86M|llama-prompt-guard-2-86m"
-  "protectai/deberta-v3-base-prompt-injection-v2|deberta-prompt-injection-v2"
-  "testsavantai/prompt-injection-defender-large-v0-onnx|prompt-injection-defender-large-v0"
+  "protectai/deberta-v3-base-prompt-injection-v2|deberta-v3-base-prompt-injection-v2"
+  "madhurjindal/Jailbreak-Detector-Large|Jailbreak-Detector-Large"
+  "jackhhao/jailbreak-classifier|jailbreak-classifier"
+  "testsavantai/prompt-injection-defender-base-v1|prompt-injection-defender-base-v1"
+  "llm-semantic-router/lora_jailbreak_classifier_modernbert-base_model|lora_jailbreak_classifier_modernbert-base_model"
 )
 
-echo "Generating detector YAML files..."
+# Create deployments directory if it doesn't exist
+mkdir -p deployments
+
+echo "Generating detector YAML files in deployments/ directory..."
 
 for entry in "${models[@]}"; do
   # Split on pipe character
@@ -17,13 +20,13 @@ for entry in "${models[@]}"; do
   model_name="${entry##*|}"
   model_path=$(basename "$hf_path")
 
-  echo "Creating ${model_name}-detector.yaml"
+  echo "Creating deployments/${model_name}-detector.yaml"
 
   # Replace variables in template
   sed -e "s/\${MODEL_NAME}/$model_name/g" \
       -e "s/\${MODEL_PATH}/$model_path/g" \
-      detector-template.yaml > "${model_name}-detector.yaml"
+      detector-template.yaml > "deployments/${model_name}-detector.yaml"
 done
 
 echo "Done! Generated YAML files:"
-ls -1 *-detector.yaml 2>/dev/null || echo "No files generated"
+ls -1 deployments/*-detector.yaml 2>/dev/null || echo "No files generated"

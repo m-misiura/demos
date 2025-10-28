@@ -62,11 +62,11 @@ spec:
             - -c
             - |
               models=(
-                Intel/toxic-prompt-roberta
-                codeintegrity-ai/promptguard
-                meta-llama/Llama-Prompt-Guard-2-86M
-                protectai/deberta-v3-base-prompt-injection-v2
-                testsavantai/prompt-injection-defender-large-v0
+                "protectai/deberta-v3-base-prompt-injection-v2"
+                "madhurjindal/Jailbreak-Detector-Large"
+                "jackhhao/jailbreak-classifier"
+                "testsavantai/prompt-injection-defender-base-v1"
+                "llm-semantic-router/lora_jailbreak_classifier_modernbert-base_model"
               )
               echo "Starting download"
               mkdir /mnt/models/llms/
