@@ -1,0 +1,129 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nemo-guardrails
+  labels:
+    app: nemo-guardrails
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nemo-guardrails
+  template:
+    metadata:
+      labels:
+        app: nemo-guardrails
+    spec:
+      initContainers:
+        - name: copy-models
+          image: quay.io/rh-ee-mmisiura/nemo-guardrails-models:latest_v1
+          imagePullPolicy: Always
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              echo "Copying models from image to PVC..."
+              # Check if models already exist in PVC
+              if [ -d "/pvc/.cache/transformers" ] && [ -d "/pvc/.cache/sentence_transformers" ]; then
+                echo "✓ Models already exist in PVC, skipping copy"
+                du -sh /pvc/.cache/*
+                exit 0
+              fi
+              # Copy models from image to PVC
+              echo "Copying models..."
+              cp -r /models/.cache/* /pvc/.cache/
+              echo "✓ Models copied successfully"
+              du -sh /pvc/.cache/*
+          volumeMounts:
+            - name: models-cache
+              mountPath: /pvc/.cache
+      containers:
+        - name: server
+          image: quay.io/rh-ee-mmisiura/nemo-guardrails:no_models
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+              protocol: TCP
+          env:
+            - name: CONFIG_ID
+              value: "nemo"
+            - name: PORT
+              value: "8000"
+            # Model cache paths
+            - name: HF_HOME
+              value: "/app/.cache/huggingface"
+            - name: TRANSFORMERS_CACHE
+              value: "/app/.cache/transformers"
+            - name: SENTENCE_TRANSFORMERS_HOME
+              value: "/app/.cache/sentence_transformers"
+            - name: NLTK_DATA
+              value: "/app/.cache/nltk_data"
+            - name: FASTEMBED_CACHE_PATH
+              value: "/app/.cache/fastembed"
+          volumeMounts:
+            - name: config
+              mountPath: /app/config/nemo
+              readOnly: true
+            - name: models-cache
+              mountPath: /app/.cache
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        - name: config
+          configMap:
+            name: nemo-config
+        - name: models-cache
+          persistentVolumeClaim:
+            claimName: nemo-models-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nemo-guardrails-service
+  labels:
+    app: nemo-guardrails
+spec:
+  type: ClusterIP
+  selector:
+    app: nemo-guardrails
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      protocol: TCP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nemo-guardrails
+  labels:
+    app: nemo-guardrails
+spec:
+  to:
+    kind: Service
+    name: nemo-guardrails-service
+  port:
+    targetPort: http
