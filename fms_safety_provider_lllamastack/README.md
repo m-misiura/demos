@@ -325,3 +325,57 @@ which should return:
 ```
 
 Note also that sometimes, you need to mount the appropriate certs to the llama stack distribution ; for an example of how to do this, see e.g. [this demo](https://github.com/m-misiura/llama-stack-k8s/tree/tls-testing)
+
+## Sample requests -- responses with guardrails
+
+```
+curl -X POST "http://$LLS_ROUTE/v1/responses" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "vllm-inference/'"$INFERENCE_MODEL"'",
+    "input": "My email is test@example.com.",
+    "guardrails": ["secure_shield"]
+  }' | jq '.'
+```
+
+which should yield
+
+```
+{
+  "created_at": 1764078500,
+  "error": null,
+  "id": "resp_e9f11501-a443-42bf-a9a2-2dc70d492f8a",
+  "model": "vllm-inference/microsoft/phi-4",
+  "object": "response",
+  "output": [
+    {
+      "content": [
+        {
+          "type": "refusal",
+          "refusal": "My email is test@example.com. (flagged for: pii)"
+        }
+      ],
+      "role": "assistant",
+      "type": "message",
+      "id": null,
+      "status": null
+    }
+  ],
+  "parallel_tool_calls": false,
+  "previous_response_id": null,
+  "prompt": null,
+  "status": "completed",
+  "temperature": null,
+  "text": {
+    "format": {
+      "type": "text"
+    }
+  },
+  "top_p": null,
+  "tools": null,
+  "truncation": null,
+  "usage": null,
+  "instructions": null,
+  "max_tool_calls": null
+}
+```
