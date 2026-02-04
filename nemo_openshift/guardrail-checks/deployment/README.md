@@ -69,9 +69,11 @@ this returns
     "log": {
       "activated_rails": [],
       "stats": {
-        "input_rails_duration": 0.018383502960205078,
-        "output_rails_duration": 0,
-        "total_duration": 0.2211906909942627,
+        "input_rails_duration": 0.020166635513305664,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": 0.19710016250610352,
         "llm_calls_duration": 0,
         "llm_calls_count": 0,
         "llm_calls_total_prompt_tokens": 0,
@@ -126,9 +128,11 @@ this returns
         "check forbidden words"
       ],
       "stats": {
-        "input_rails_duration": 0.02437281608581543,
-        "output_rails_duration": 0,
-        "total_duration": 0.027664661407470703,
+        "input_rails_duration": 0.025310993194580078,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": 0.028911352157592773,
         "llm_calls_duration": 0,
         "llm_calls_count": 0,
         "llm_calls_total_prompt_tokens": 0,
@@ -196,9 +200,11 @@ this returns
         "check forbidden words"
       ],
       "stats": {
-        "input_rails_duration": 0.03590035438537598,
-        "output_rails_duration": 0,
-        "total_duration": 0.05076241493225098,
+        "input_rails_duration": 0.03704404830932617,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": 0.052826642990112305,
         "llm_calls_duration": 0,
         "llm_calls_count": 0,
         "llm_calls_total_prompt_tokens": 0,
@@ -253,9 +259,11 @@ this returns
         "check output length"
       ],
       "stats": {
-        "input_rails_duration": 0,
-        "output_rails_duration": 0.026830673217773438,
-        "total_duration": 0.03836417198181152,
+        "input_rails_duration": null,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": 0.026781320571899414,
+        "total_duration": 0.03856921195983887,
         "llm_calls_duration": 0,
         "llm_calls_count": 0,
         "llm_calls_total_prompt_tokens": 0,
@@ -340,9 +348,11 @@ this should return
         "check output length"
       ],
       "stats": {
-        "input_rails_duration": 0.0382232666015625,
-        "output_rails_duration": 0.027070045471191406,
-        "total_duration": 0.09095549583435059,
+        "input_rails_duration": 0.035939693450927734,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": 0.02526116371154785,
+        "total_duration": 0.0860130786895752,
         "llm_calls_duration": 0,
         "llm_calls_count": 0,
         "llm_calls_total_prompt_tokens": 0,
@@ -423,10 +433,12 @@ this should return
     "log": {
       "activated_rails": [],
       "stats": {
-        "input_rails_duration": 0.27376484870910645,
-        "output_rails_duration": 0,
-        "total_duration": 0.2860848903656006,
-        "llm_calls_duration": 0.24728822708129883,
+        "input_rails_duration": 0.19160699844360352,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": 0.20287823677062988,
+        "llm_calls_duration": 0.16736936569213867,
         "llm_calls_count": 1,
         "llm_calls_total_prompt_tokens": 167,
         "llm_calls_total_completion_tokens": 3,
@@ -506,10 +518,12 @@ this should return
         "self check input"
       ],
       "stats": {
-        "input_rails_duration": 0.1835942268371582,
-        "output_rails_duration": 0,
-        "total_duration": 0.18748831748962402,
-        "llm_calls_duration": 0.14695501327514648,
+        "input_rails_duration": 0.18825888633728027,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": 0.19336867332458496,
+        "llm_calls_duration": 0.14794230461120605,
         "llm_calls_count": 1,
         "llm_calls_total_prompt_tokens": 176,
         "llm_calls_total_completion_tokens": 3,
@@ -582,10 +596,12 @@ this returns
         "self check input"
       ],
       "stats": {
-        "input_rails_duration": 0.20856237411499023,
-        "output_rails_duration": 0,
-        "total_duration": 0.21259641647338867,
-        "llm_calls_duration": 0.17438626289367676,
+        "input_rails_duration": 0.10602068901062012,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": 0.10922813415527344,
+        "llm_calls_duration": 0.07540464401245117,
         "llm_calls_count": 1,
         "llm_calls_total_prompt_tokens": 82,
         "llm_calls_total_completion_tokens": 3,
@@ -596,7 +612,7 @@ this returns
 }
 ```
 
-## Tools
+## Tools response
 ----
 ### Test 1: Safe tool response
 
@@ -652,9 +668,11 @@ this should return
     "log": {
       "activated_rails": [],
       "stats": {
-        "input_rails_duration": 0,
-        "output_rails_duration": 0,
-        "total_duration": 0.022130727767944336,
+        "input_rails_duration": null,
+        "dialog_rails_duration": 0.023744583129882812,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": 0.02432727813720703,
         "llm_calls_duration": 0,
         "llm_calls_count": 0,
         "llm_calls_total_prompt_tokens": 0,
@@ -685,7 +703,7 @@ curl -s -X POST "${BASE_URL}${ENDPOINT}" \
 
 this should return
 
-```
+```json
 {
   "status": "blocked",
   "rails_status": {
@@ -724,15 +742,13 @@ this should return
   ],
   "guardrails_data": {
     "log": {
-      "activated_rails": [
-        "check tool response safety",
-        "process user tool messages",
-        "run tool input rails"
-      ],
+      "activated_rails": [],
       "stats": {
-        "input_rails_duration": 0,
-        "output_rails_duration": 0,
-        "total_duration": 0.028680086135864258,
+        "input_rails_duration": null,
+        "dialog_rails_duration": 0.01323246955871582,
+        "generation_rails_duration": 0.01597881317138672,
+        "output_rails_duration": null,
+        "total_duration": 0.030114412307739258,
         "llm_calls_duration": 0,
         "llm_calls_count": 0,
         "llm_calls_total_prompt_tokens": 0,
@@ -776,15 +792,39 @@ this should return
 ```json
 {
   "status": "success",
-  "rails_status": {},
+  "rails_status": {
+    "check tool call safety": {
+      "status": "success"
+    }
+  },
   "messages": [
     {
       "index": 0,
       "role": "assistant",
-      "rails": {}
+      "rails": {
+        "check tool call safety": {
+          "status": "success"
+        }
+      }
     }
   ],
-  "guardrails_data": null
+  "guardrails_data": {
+    "log": {
+      "activated_rails": [],
+      "stats": {
+        "input_rails_duration": null,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": null,
+        "llm_calls_duration": 0,
+        "llm_calls_count": 0,
+        "llm_calls_total_prompt_tokens": 0,
+        "llm_calls_total_completion_tokens": 0,
+        "llm_calls_total_tokens": 0
+      }
+    }
+  }
 }
 ```
 
@@ -840,7 +880,18 @@ this should return
       "activated_rails": [
         "check tool call safety"
       ],
-      "stats": {}
+      "stats": {
+        "input_rails_duration": null,
+        "dialog_rails_duration": null,
+        "generation_rails_duration": null,
+        "output_rails_duration": null,
+        "total_duration": null,
+        "llm_calls_duration": 0,
+        "llm_calls_count": 0,
+        "llm_calls_total_prompt_tokens": 0,
+        "llm_calls_total_completion_tokens": 0,
+        "llm_calls_total_tokens": 0
+      }
     }
   }
 }
