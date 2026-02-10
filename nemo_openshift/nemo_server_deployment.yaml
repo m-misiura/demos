@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nemo-guardrails
-        image: quay.io/rh-ee-mmisiura/nemo-guardrails:latest
+        image: quay.io/rh-ee-mmisiura/nemo-guardrails:latest_develop
         imagePullPolicy: Always
         env:
         - name: CONFIG_ID
