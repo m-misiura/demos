@@ -63,10 +63,10 @@ spec:
             - |
               models=(
                 "protectai/deberta-v3-base-prompt-injection-v2"
-                "madhurjindal/Jailbreak-Detector-Large"
                 "jackhhao/jailbreak-classifier"
-                "testsavantai/prompt-injection-defender-base-v1"
-                "llm-semantic-router/lora_jailbreak_classifier_modernbert-base_model"
+                "devndeploy/bert-prompt-injection-detector"
+                "madhurjindal/Jailbreak-Detector"
+                "llm-semantic-router/mmbert32k-jailbreak-detector-merged"
               )
               echo "Starting download"
               mkdir /mnt/models/llms/
@@ -74,7 +74,6 @@ spec:
                 echo "Downloading $model"
                 /tmp/venv/bin/huggingface-cli download $model --token $HF_TOKEN --local-dir /mnt/models/huggingface/$(basename $model)
               done
-
               echo "Done!"
           resources:
             limits:

@@ -18,10 +18,10 @@ sanitize_k8s_name() {
 # Model mapping: HuggingFace path|short name for Kubernetes resources
 models=(
   "protectai/deberta-v3-base-prompt-injection-v2|deberta-prompt-injection-v2"
-  "madhurjindal/Jailbreak-Detector-Large|jailbreak-detector-large"
   "jackhhao/jailbreak-classifier|jailbreak-classifier"
-  "testsavantai/prompt-injection-defender-base-v1|prompt-injection-defender-v1"
-  "llm-semantic-router/lora_jailbreak_classifier_modernbert-base_model|lora-jailbreak-modernbert"
+  "devndeploy/bert-prompt-injection-detector|bert-prompt-injection-detector"
+  "madhurjindal/Jailbreak-Detector|jailbreak-detector"
+  "llm-semantic-router/mmbert32k-jailbreak-detector-merged|mmbert32k-jailbreak-detector"
 )
 
 # Create deployments directory if it doesn't exist
