@@ -1,7 +1,7 @@
 apiVersion: serving.kserve.io/v1alpha1
 kind: ServingRuntime
 metadata:
-  name: guardrails-detector-runtime-prompt-injection-defender-v1
+  name: guardrails-detector-runtime-mmbert32k-jailbreak-detector
   annotations:
     openshift.io/display-name: Guardrails Detector ServingRuntime for KServe
     opendatahub.io/recommended-accelerators: '["nvidia.com/gpu"]'
@@ -47,12 +47,12 @@ spec:
 apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
-  name: prompt-injection-defender-v1-detector
+  name: mmbert32k-jailbreak-detector-detector
   labels:
     opendatahub.io/dashboard: 'true'
     trustyai/guardrails: 'true'
   annotations:
-    openshift.io/display-name: prompt-injection-defender-v1-detector
+    openshift.io/display-name: mmbert32k-jailbreak-detector-detector
     serving.knative.openshift.io/enablePassthrough: 'true'
     sidecar.istio.io/inject: 'true'
     sidecar.istio.io/rewriteAppHTTPProbers: 'true'
@@ -70,10 +70,10 @@ spec:
       modelFormat:
         name: guardrails-detector-huggingface
       name: ''
-      runtime: guardrails-detector-runtime-prompt-injection-defender-v1
+      runtime: guardrails-detector-runtime-mmbert32k-jailbreak-detector
       storage:
         key: aws-connection-minio-data-connection-detector-models
-        path: prompt-injection-defender-base-v1
+        path: mmbert32k-jailbreak-detector-merged
       resources:
         limits:
           cpu: '1'
@@ -87,11 +87,11 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: prompt-injection-defender-v1-detector-route
+  name: mmbert32k-jailbreak-detector-detector-route
 spec:
   to:
     kind: Service
-    name: prompt-injection-defender-v1-detector-predictor
+    name: mmbert32k-jailbreak-detector-detector-predictor
   port:
     targetPort: https
   tls:
