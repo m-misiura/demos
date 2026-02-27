@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nemo-lemonade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nemo-lemonade
+  template:
+    metadata:
+      labels:
+        app: nemo-lemonade
+    spec:
+      containers:
+      - name: nemo-lemonade
+        image: quay.io/rh-ee-mmisiura/nemo-guardrails:models-endpoint
+        imagePullPolicy: Always
+        env:
+        - name: CONFIG_ID
+          value: lemonade-stand
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config/lemonade-stand
+      volumes:
+      - name: config-volume
+        configMap:
+          name: nemo-lemonade-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nemo-lemonade-service
+spec:
+  selector:
+    app: nemo-lemonade
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nemo-lemonade
+spec:
+  to:
+    kind: Service
+    name: nemo-lemonade-service
+  port:
+    targetPort: http
