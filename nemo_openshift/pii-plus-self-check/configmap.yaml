@@ -24,6 +24,8 @@ data:
         flows:
           - detect sensitive data on output
           - self check output
+        streaming:
+          enabled: true
 
       config:
         sensitive_data_detection:
