@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: base-model-${CONFIG_NAME}
+data:
+  config.yaml: |
+    models:
+      - type: main
+        engine: openai
+        parameters:
+          openai_api_base: ${LLM_API_BASE}
+          model_name: ${LLM_MODEL_NAME}
+          api_key: ${LLM_API_KEY}
+    rails:
+      input:
+        flows: []
+      output:
+        flows: []
+  rails.co: |
+    # Empty Colang file

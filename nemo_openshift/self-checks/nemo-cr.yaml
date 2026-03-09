@@ -1,0 +1,16 @@
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: NemoGuardrails
+metadata:
+  name: nemoguardrails
+spec:
+  nemoConfigs:
+    - name: base-phi-4
+      configMaps:
+        - base-model-phi-4
+      default: true
+    - name: rail-input-check
+      configMaps:
+        - rail-input-check
+    - name: rail-output-check
+      configMaps:
+        - rail-output-check
