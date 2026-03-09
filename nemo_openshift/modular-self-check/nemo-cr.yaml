@@ -1,0 +1,19 @@
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: NemoGuardrails
+metadata:
+  name: nemoguardrails
+spec:
+  nemoConfigs:
+    - name: base-phi-4
+      configMaps:
+        - base-model-phi-4
+      default: true
+    - name: rail-prompt-injection
+      configMaps:
+        - rail-prompt-injection-config
+    - name: rail-hap
+      configMaps:
+        - rail-hap-config
+    - name: rail-pii
+      configMaps:
+        - rail-pii-config

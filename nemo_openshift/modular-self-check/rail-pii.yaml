@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rail-pii-config
+data:
+  config.yaml: |
+    rails:
+      input:
+        flows:
+          - check pii input
+      output:
+        flows:
+          - check pii output
+    prompts:
+      - task: check_pii_input
+        content: |
+          Does this input contain PII (names, emails, SSN, phone, address)?
+          User Input: "{{ user_input }}"
+          Answer [Yes/No]:
+      - task: check_pii_output
+        content: |
+          Does this output expose PII (names, emails, SSN, phone, address)?
+          Bot Response: "{{ bot_response }}"
+          Answer [Yes/No]:
+  flows.co: |
+    define bot refuse to respond
+      "I'm sorry, I can't respond to that."
+
+    define flow check pii input
+      $allowed = execute check_pii_input
+      if not $allowed
+        bot refuse to respond
+        abort
+
+    define flow check pii output
+      $allowed = execute check_pii_output
+      if not $allowed
+        bot refuse to respond
+        abort
+  actions.py: |
+    from nemoguardrails.actions import action
+    from nemoguardrails.actions.llm.utils import llm_call
+
+    @action(is_system_action=True)
+    async def check_pii_input(llm_task_manager, context, llm, config):
+        prompt = llm_task_manager.render_task_prompt("check_pii_input", {"user_input": context.get("user_message")})
+        response = await llm_call(llm, prompt, llm_params={"temperature": config.lowest_temperature, "max_tokens": 3})
+        return llm_task_manager.parse_task_output("check_pii_input", response, forced_output_parser="is_content_safe")[0]
+
+    @action(is_system_action=True)
+    async def check_pii_output(llm_task_manager, context, llm, config):
+        prompt = llm_task_manager.render_task_prompt("check_pii_output", {"bot_response": context.get("bot_message")})
+        response = await llm_call(llm, prompt, llm_params={"temperature": config.lowest_temperature, "max_tokens": 3})
+        return llm_task_manager.parse_task_output("check_pii_output", response, forced_output_parser="is_content_safe")[0]

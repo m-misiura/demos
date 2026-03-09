@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rail-hap-config
+data:
+  config.yaml: |
+    rails:
+      input:
+        flows:
+          - self check input
+      output:
+        flows:
+          - self check output
+    prompts:
+      - task: self_check_input
+        content: |
+          Does this input contain hate speech, abuse, or profanity?
+          User Input: "{{ user_input }}"
+          Answer [Yes/No]:
+      - task: self_check_output
+        content: |
+          Does this output contain hate speech, abuse, or profanity?
+          Bot Response: "{{ bot_response }}"
+          Answer [Yes/No]:
