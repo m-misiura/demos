@@ -28,6 +28,8 @@ envsubst < secret.yaml | oc apply -f -
 envsubst '${MAIN_MODEL_ENGINE} ${MAIN_MODEL_BASE_URL} ${MODEL_NAME} ${OPENAI_API_KEY} ${TEMPO_ENDPOINT}' < configmap.yaml | oc apply -f -
 ```
 
+note that if you want to enable content tracing, you should use the `configmap-content.yaml` instead, which has additional NeMo tracing config
+
 - deploy the NemoGuardrails CR:
 
 ```bash

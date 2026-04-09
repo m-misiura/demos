@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+data:
+  config.yaml: |
+    config_id: pii
+
+    models:
+      - type: main
+        engine: ${MAIN_MODEL_ENGINE}
+        parameters:
+          openai_api_base: ${MAIN_MODEL_BASE_URL}
+          model_name: ${MODEL_NAME}
+          api_key: ${OPENAI_API_KEY}
+
+    tracing:
+      enabled: true
+      span_format: opentelemetry
+      enable_content_capture: true
+      adapters:
+        - name: OpenTelemetry
+
+    rails:
+      input:
+        flows:
+          - detect sensitive data on input
+
+      output:
+        flows:
+          - detect sensitive data on output
+        streaming:
+          enabled: true
+
+      config:
+        sensitive_data_detection:
+          input:
+            entities:
+              - PERSON
+              - EMAIL_ADDRESS
+              - PHONE_NUMBER
+              - CREDIT_CARD
+              - US_SSN
+              - LOCATION
+              - IP_ADDRESS
+          output:
+            entities:
+              - PERSON
+              - EMAIL_ADDRESS
+              - PHONE_NUMBER
+              - CREDIT_CARD
+              - US_SSN
+              - LOCATION
+              - IP_ADDRESS
+
+  rails.co: |
+    # Using built-in self-check rails
