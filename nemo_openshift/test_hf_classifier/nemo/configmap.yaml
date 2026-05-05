@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hf-classifier-config
+data:
+  config.yaml: |
+    config_id: hf-classifier-test
+
+    models:
+      - type: main
+        engine: openai
+        parameters:
+          base_url: ${LLM_API_BASE}
+          api_key: ${LLM_API_KEY}
+          model_name: ${LLM_MODEL_NAME}
+          max_tokens: 4096
+
+    rails:
+      config:
+        hf_classifier:
+          hap:
+            backend: fms
+            model_name: hap-detector
+            endpoint: ${HAP_ENDPOINT}
+            threshold: 0.5
+            blocked_labels:
+              - "LABEL_1"
+            parameters:
+              verify_ssl: false
+              default_headers:
+                Authorization: "Bearer ${OC_TOKEN}"
+
+          prompt_injection:
+            backend: kserve
+            model_name: prompt-injection-detector
+            endpoint: ${PROMPT_INJECTION_ENDPOINT}
+            threshold: 0.5
+            blocked_labels:
+              - "1"
+            parameters:
+              verify_ssl: false
+              default_headers:
+                Authorization: "Bearer ${OC_TOKEN}"
+
+          lang:
+            backend: vllm
+            model_name: language-classifier
+            endpoint: ${LANG_ENDPOINT}
+            threshold: 0.5
+            blocked_labels:
+              - "fr"
+              - "de"
+              - "es"
+              - "pt"
+              - "it"
+              - "nl"
+              - "pl"
+              - "ru"
+              - "ja"
+              - "zh"
+              - "ko"
+              - "ar"
+              - "hi"
+              - "tr"
+              - "vi"
+              - "sv"
+              - "da"
+              - "fi"
+              - "no"
+            parameters:
+              verify_ssl: false
+              default_headers:
+                Authorization: "Bearer ${OC_TOKEN}"
+
+          ner:
+            backend: local
+            model_name: dslim/distilbert-NER
+            task: token-classification
+            threshold: 0.7
+            blocked_labels:
+              - "PER"
+              - "LOC"
+              - "ORG"
+            parameters:
+              aggregation_strategy: simple
+
+      input:
+        flows:
+          - hf classifier check input $classifier=lang
+          - hf classifier check input $classifier=prompt_injection
+          - hf classifier check input $classifier=hap
+          - hf classifier check input $classifier=ner
+      output:
+        flows:
+          - hf classifier check output $classifier=hap
+          - hf classifier check output $classifier=ner
+  rails.co: |
+    # Using built-in hf_classifier rails
