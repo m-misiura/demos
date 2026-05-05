@@ -9,6 +9,14 @@ Tests all four HuggingFace classifier backends supported by NeMo Guardrails:
 | `lang` | vLLM | xlm-roberta-base-language-detection | Non-English language blocking |
 | `ner` | Local | dslim/distilbert-NER | PII entity detection (PER/LOC/ORG) |
 
+Note; you need this server image: `quay.io/misiura/nemo-hf-classifier-test:latest`
+
+You can swap out an image, e.g. using the following command
+
+```bash
+oc patch subscription rhods-operator -n redhat-ods-operator --type='merge' -p='{"spec":{"config":{"env":[{"name":"RELATED_IMAGE_ODH_TRUSTYAI_NEMO_GUARDRAILS_SERVER_IMAGE","value":"quay.io/rh-ee-mmisiura/nemo-guardrails:hf_classifier"}]}}}'
+```
+
 ### Prerequisites
 
 Deploy the three remote detectors first (from `../detectors/`):
