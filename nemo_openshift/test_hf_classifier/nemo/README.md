@@ -14,7 +14,7 @@ Note; you need this server image: `quay.io/misiura/nemo-hf-classifier-test:lates
 You can swap out an image, e.g. using the following command
 
 ```bash
-oc patch subscription rhods-operator -n redhat-ods-operator --type='merge' -p='{"spec":{"config":{"env":[{"name":"RELATED_IMAGE_ODH_TRUSTYAI_NEMO_GUARDRAILS_SERVER_IMAGE","value":"quay.io/rh-ee-mmisiura/nemo-guardrails:hf_classifier"}]}}}'
+oc patch subscription rhods-operator -n redhat-ods-operator --type='merge' -p='{"spec":{"config":{"env":[{"name":"RELATED_IMAGE_ODH_TRUSTYAI_NEMO_GUARDRAILS_SERVER_IMAGE","value":"quay.io/rh-ee-mmisiura/nemo-guardrails:hf_classifier_v2"}]}}}'
 ```
 
 ### Prerequisites
