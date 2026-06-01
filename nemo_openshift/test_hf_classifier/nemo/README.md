@@ -14,7 +14,7 @@ Note; you need this server image: `quay.io/misiura/nemo-hf-classifier-test:lates
 You can swap out an image, e.g. using the following command
 
 ```bash
-oc patch subscription rhods-operator -n redhat-ods-operator --type='merge' -p='{"spec":{"config":{"env":[{"name":"RELATED_IMAGE_ODH_TRUSTYAI_NEMO_GUARDRAILS_SERVER_IMAGE","value":"quay.io/rh-ee-mmisiura/nemo-guardrails:hf_classifier_v2"}]}}}'
+oc patch subscription rhods-operator -n redhat-ods-operator --type='merge' -p='{"spec":{"config":{"env":[{"name":"RELATED_IMAGE_ODH_TRUSTYAI_NEMO_GUARDRAILS_SERVER_IMAGE","value":"quay.io/rh-ee-mmisiura/nemo-guardrails:hf_classifier_review_round3"}]}}}'
 ```
 
 ### Prerequisites
@@ -24,7 +24,7 @@ Deploy the three remote detectors first (from `../detectors/`):
 ```bash
 oc apply -f ../detectors/kserve.yaml
 oc apply -f ../detectors/vllm.yaml
-# fms.yaml if using FMS backend, or use the lightweight_detectors
+oc apply -f ../detectors/fms.yaml
 ```
 
 Wait for all detector pods to be ready.
@@ -41,7 +41,7 @@ export PROMPT_INJECTION_ENDPOINT=$(oc get route prompt-injection-detector-route 
 export LANG_ENDPOINT=$(oc get route language-classifier-route -o jsonpath='https://{.spec.host}')
 
 envsubst < secret.yaml | oc apply -f -
-envsubst '${LLM_API_BASE} ${LLM_API_KEY} ${LLM_MODEL_NAME} ${OC_TOKEN} ${HAP_ENDPOINT} ${PROMPT_INJECTION_ENDPOINT} ${LANG_ENDPOINT}' < configmap.yaml | oc apply -f -
+envsubst '${LLM_API_BASE} ${LLM_MODEL_NAME} ${HAP_ENDPOINT} ${PROMPT_INJECTION_ENDPOINT} ${LANG_ENDPOINT}' < configmap.yaml | oc apply -f -
 oc apply -f nemo.yaml
 ```
 

@@ -16,3 +16,8 @@ spec:
         secretKeyRef:
           name: hf-classifier-llm
           key: api-key
+    - name: OC_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: hf-classifier-llm
+          key: oc-token

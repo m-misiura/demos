@@ -16,17 +16,12 @@ spec:
   labels:
     opendatahub.io/dashboard: 'true'
   containers:
-    - args:
-        - '/mnt/models'
-        - '--port=8080'
-        - '--served-model-name={{.Name}}'
-        - '--runner=pooling'
-        - '--dtype=float16'
-        - '--max-model-len=512'
-        - '--enforce-eager'
-      command:
-        - vllm
-        - serve
+    - command:
+        - sh
+        - '-c'
+        - |
+          echo "default:x:$(id -u):0:default:/tmp:/bin/sh" >> /etc/passwd
+          exec vllm serve /mnt/models --port=8080 --served-model-name={{.Name}} --runner=pooling --dtype=float16 --max-model-len=512 --enforce-eager
       env:
         - name: HF_HOME
           value: /tmp/hf_home
