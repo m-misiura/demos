@@ -1,0 +1,15 @@
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: NemoGuardrails
+metadata:
+  name: guardrails
+  annotations:
+    security.opendatahub.io/enable-auth: 'false'
+spec:
+  nemoConfigs:
+    - name: automated-red-teaming-guardrails
+      default: true
+      configMaps:
+        - guardrails-config
+  env:
+    - name: OPENAI_API_KEY
+      value: "dummy"

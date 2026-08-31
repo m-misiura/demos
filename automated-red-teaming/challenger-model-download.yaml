@@ -1,0 +1,34 @@
+# One-time Job to download the challenger model from HuggingFace to a PVC.
+# The storage initializer can't write to /.cache (non-root), so we set HF_HOME
+# and disable Xet to avoid the Rust-layer permission error.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: download-challenger-model
+spec:
+  template:
+    spec:
+      containers:
+        - name: downloader
+          image: registry.redhat.io/rhoai/odh-kserve-storage-initializer-rhel9@sha256:33a78b3fdf2523533ea3a97fe01b0e5dd8d86a70748b055970e9910590e94cdb
+          command: ["/storage-initializer/scripts/initializer-entrypoint"]
+          args: ["hf://cazzz307/Abliterated-Llama-3.2-1B-Instruct", "/mnt/models"]
+          env:
+            - name: HF_HOME
+              value: /tmp/hf_home
+            - name: HF_HUB_DISABLE_XET
+              value: "1"
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hf-token
+                  key: token
+          volumeMounts:
+            - name: model-storage
+              mountPath: /mnt/models
+      volumes:
+        - name: model-storage
+          persistentVolumeClaim:
+            claimName: challenger-model-pvc
+      restartPolicy: Never
+  backoffLimit: 2

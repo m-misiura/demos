@@ -1,0 +1,98 @@
+# Judge + SDG model — abliterated Llama 3.2 1B serving two roles in the risk assessment pipeline:
+#   1. SDG (Synthetic Data Generation): generates diverse adversarial prompts without self-censoring
+#   2. Judge: classifies target model responses as complied/rejected/alternative/other
+#   3. Attacker/Evaluator (TAP probe): iteratively crafts jailbreaks (defaults to judge if not set)
+#
+# "Abliterated" means safety refusal behaviors have been removed via directional ablation.
+# Llama 3.2 supports system role natively, so no custom chat template is needed.
+#
+# Pre-requisites:
+#   1. Create the HF token secret:  oc apply -f hf-token-secret.yaml
+#   2. Create the PVC:              oc apply -f challenger-model-pvc.yaml
+#   3. Download the model:          oc apply -f challenger-model-download.yaml
+#   4. Wait for Job to complete:    oc logs -f job/download-challenger-model
+#   5. Deploy:                      oc apply -f challenger-model.yaml
+---
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: challenger-model
+  annotations:
+    openshift.io/display-name: "Judge + SDG LLM (Llama 3.2 1B Instruct Abliterated)"
+    opendatahub.io/model-type: generative
+    security.opendatahub.io/enable-auth: "false"
+  labels:
+    opendatahub.io/dashboard: "true"
+    opendatahub.io/genai-asset: "true"
+spec:
+  model:
+    name: challenger-model
+    uri: pvc://challenger-model-pvc
+  replicas: 1
+  router:
+    route: {}
+  template:
+    tolerations:
+      - effect: NoSchedule
+        key: nvidia.com/gpu
+        operator: Exists
+    containers:
+      - name: main
+        image: registry.redhat.io/rhaiis/vllm-cuda-rhel9:3.3.0
+        command:
+          - python
+          - -m
+          - vllm.entrypoints.openai.api_server
+        args:
+          - "--served-model-name={{.Name}}"
+          - --model=/mnt/models
+          - --enable-ssl-refresh
+          - --ssl-certfile=/var/run/kserve/tls/tls.crt
+          - --ssl-keyfile=/var/run/kserve/tls/tls.key
+          - --enable-force-include-usage
+          - --max-model-len=8192
+          - --enforce-eager
+        ports:
+          - containerPort: 8000
+            name: http
+            protocol: TCP
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTPS
+          failureThreshold: 60
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTPS
+          periodSeconds: 30
+          timeoutSeconds: 30
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTPS
+          periodSeconds: 15
+          timeoutSeconds: 15
+          failureThreshold: 30
+        resources:
+          requests:
+            cpu: "2"
+            memory: 4Gi
+            nvidia.com/gpu: "1"
+          limits:
+            cpu: "4"
+            memory: 8Gi
+            nvidia.com/gpu: "1"
+        volumeMounts:
+          - mountPath: /dev/shm
+            name: shm
+    volumes:
+      - name: shm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 2Gi

@@ -1,0 +1,12 @@
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: EvalHub
+metadata:
+  name: evalhub
+spec:
+  replicas: 1
+  database:
+    type: postgresql
+    secret: evalhub-db-credentials
+  env:
+    - name: EVALHUB_HARDWARE_PROFILES_NAMESPACE
+      value: "opendatahub"

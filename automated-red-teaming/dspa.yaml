@@ -1,0 +1,35 @@
+# Data Science Pipelines Application with embedded MinIO
+# The DSPA operator deploys MinIO and the pipeline server automatically.
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dspa-s3-credentials
+type: Opaque
+stringData:
+  AWS_ACCESS_KEY_ID: "minio"
+  AWS_SECRET_ACCESS_KEY: "minio123"
+  AWS_S3_ENDPOINT: "http://minio-dspa.evalhub.svc.cluster.local:9000"
+  AWS_S3_BUCKET: "mlpipeline"
+  AWS_DEFAULT_REGION: "us-east-1"
+---
+apiVersion: datasciencepipelinesapplications.opendatahub.io/v1
+kind: DataSciencePipelinesApplication
+metadata:
+  name: dspa
+spec:
+  dspVersion: v2
+  objectStorage:
+    minio:
+      deploy: true
+      bucket: mlpipeline
+      image: quay.io/minio/minio:RELEASE.2025-02-28T09-55-16Z
+      s3CredentialsSecret:
+        accessKey: AWS_ACCESS_KEY_ID
+        secretKey: AWS_SECRET_ACCESS_KEY
+        secretName: dspa-s3-credentials
+  database:
+    mariaDB:
+      deploy: true
+      pipelineDBName: mlpipeline
+      pvcSize: 10Gi

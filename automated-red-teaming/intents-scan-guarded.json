@@ -1,0 +1,38 @@
+{
+  "name": "intents-scan-guarded",
+  "model": {
+    "url": "http://guardrails.evalhub.svc.cluster.local/v1",
+    "name": "target-model",
+    "auth": {
+      "secret_ref": "model-api-keys"
+    }
+  },
+  "benchmarks": [
+    {
+      "id": "intents",
+      "provider_id": "garak-kfp",
+      "parameters": {
+        "kfp_config": {
+          "model_url": "http://guardrails.evalhub.svc.cluster.local/v1",
+          "endpoint": "https://ds-pipeline-dspa.evalhub.svc.cluster.local:8443",
+          "namespace": "evalhub",
+          "s3_secret_name": "dspa-s3-credentials",
+          "s3_endpoint": "http://minio-dspa.evalhub.svc.cluster.local:9000",
+          "s3_bucket": "mlpipeline",
+          "verify_ssl": false,
+          "auth_token": "REPLACE_ME"
+        },
+        "intents_models": {
+          "judge": {
+            "url": "https://challenger-model-kserve-workload-svc.evalhub.svc.cluster.local:8000/v1",
+            "name": "challenger-model"
+          },
+          "sdg": {
+            "url": "https://challenger-model-kserve-workload-svc.evalhub.svc.cluster.local:8000/v1",
+            "name": "hosted_vllm/challenger-model"
+          }
+        }
+      }
+    }
+  ]
+}

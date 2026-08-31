@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guardrails-config
+data:
+  config.yaml: |
+    config_id: automated-red-teaming-guardrails
+
+    models:
+      - type: main
+        engine: openai
+        model: target-model
+        api_key_env_var: OPENAI_API_KEY
+        parameters:
+          base_url: https://target-model-kserve-workload-svc.evalhub.svc.cluster.local:8000/v1
+          max_tokens: 4096
+
+    rails:
+      config:
+        hf_classifier:
+          hap:
+            engine: fms
+            model: detector-hap
+            base_url: http://detector-hap-predictor.evalhub.svc.cluster.local
+            threshold: 0.5
+            blocked_labels:
+              - "LABEL_1"
+            parameters:
+              verify_ssl: false
+
+          # prompt_injection:
+          #   engine: fms
+          #   model: prompt-injection-detector
+          #   base_url: http://prompt-injection-detector-predictor.evalhub.svc.cluster.local
+          #   threshold: 0.5
+          #   blocked_labels:
+          #     - "INJECTION"
+          #   parameters:
+          #     verify_ssl: false
+
+      input:
+        flows:
+          # - hf classifier check input $classifier=prompt_injection
+          - hf classifier check input $classifier=hap
+      output:
+        flows:
+          - hf classifier check output $classifier=hap
+  rails.co: |
+    # Using built-in hf_classifier rails
