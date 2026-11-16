@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: decision-guardrails-config
+data:
+  config.yaml: |
+    models:
+      - type: main
+        engine: openai
+        model: decision-model
+        parameters:
+          base_url: https://decision-model-kserve-workload-svc.decisions-nemo.svc.cluster.local:8000/v1
+          api_key: EMPTY
+
+    rails:
+      input:
+        flows:
+          - classify input
+
+  rails.co: |
+    define flow classify input
+      $blocked = execute is_blocked(text=$user_message)
+      if $blocked
+        bot refuse
+        stop
+
+    define bot refuse
+      "I can only help with shoes, footwear, sizing, orders, and returns."
+
+  actions.py: |
+    import aiohttp
+    from nemoguardrails.actions import action
+
+    DECISIONS_URL = "https://decision-model-kserve-workload-svc.decisions-nemo.svc.cluster.local:8000/v1/decisions"
+
+    @action(is_system_action=True)
+    async def is_blocked(text: str) -> bool:
+        payload = {
+            "model": "decision-model",
+            "input": text,
+            "questions": [
+                {
+                    "type": "predicate",
+                    "name": "blocked",
+                    "instructions": "You moderate requests for a shoe retailer. Return true only if the request is unrelated to shoes, footwear, sizing, shoe care, orders, returns, or shopping for shoes. Programming, code, software development, and other non-shoe topics must return true.",
+                }
+            ],
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(DECISIONS_URL, json=payload) as response:
+                response.raise_for_status()
+                result = await response.json()
+
+        answer = next(item for item in result["answers"] if item["name"] == "blocked")
+        return answer["probability"] > 0.5
+---
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: NemoGuardrails
+metadata:
+  name: decision-guardrails
+spec:
+  exposeRoute: true
+  nemoConfigs:
+    - name: decision
+      default: true
+      configMaps:
+        - decision-guardrails-config
